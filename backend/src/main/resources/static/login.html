@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - RealEstateHub</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Dynamic Navbar -->
+    <div id="navbarPlaceholder"></div>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="p-4 bg-primary text-white text-center">
+                        <i class="bi bi-person-circle fs-1 mb-2"></i>
+                        <h4 class="fw-bold mb-1">Welcome Back</h4>
+                        <p class="small text-light opacity-75 mb-0">Sign in to manage your real estate activities</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form id="loginForm">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mb-3 shadow-sm" id="loginSubmitBtn">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div class="text-center small text-muted mb-4">
+                            Don't have an account? <a href="register.html" class="fw-semibold text-primary text-decoration-none">Register here</a>
+                        </div>
+
+                        <!-- Demo Quick Fill Buttons for Capstone Testing -->
+                        <div class="border-top pt-3">
+                            <div class="small fw-bold text-muted text-uppercase text-center mb-2" style="font-size:0.75rem;">
+                                Quick Demo Credentials (Click to Autofill)
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="fillDemo('admin@realestate.com', 'admin123')">
+                                    <i class="bi bi-shield-lock me-1"></i>Admin
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="fillDemo('agent@realestate.com', 'agent123')">
+                                    <i class="bi bi-patch-check me-1"></i>Verified Agent
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-warning" onclick="fillDemo('sarah.agent@realestate.com', 'agent123')">
+                                    <i class="bi bi-hourglass-split me-1"></i>Pending Agent
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-success" onclick="fillDemo('seller@realestate.com', 'seller123')">
+                                    <i class="bi bi-house me-1"></i>Seller
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-info" onclick="fillDemo('buyer@realestate.com', 'buyer123')">
+                                    <i class="bi bi-person me-1"></i>Buyer
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function fillDemo(email, password) {
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginSubmitBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
+
+            try {
+                const response = await apiFetch('/api/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({ email, password })
+                });
+
+                setToken(response.token);
+                setCurrentUser(response);
+                showToast(`Welcome back, ${response.name}!`, 'success');
+
+                setTimeout(() => {
+                    if (response.role === 'ROLE_ADMIN') {
+                        window.location.href = 'dashboard-admin.html';
+                    } else if (response.role === 'ROLE_SELLER' || response.role === 'ROLE_AGENT') {
+                        window.location.href = 'dashboard-seller.html';
+                    } else {
+                        window.location.href = 'dashboard-buyer.html';
+                    }
+                }, 800);
+
+            } catch (err) {
+                showToast(err.message || 'Login failed. Please check your credentials.', 'danger');
+                btn.disabled = false;
+                btn.innerHTML = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>

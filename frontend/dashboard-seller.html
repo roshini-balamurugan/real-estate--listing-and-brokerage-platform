@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller & Agent Portal - RealEstateHub</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Dynamic Navbar -->
+    <div id="navbarPlaceholder"></div>
+
+    <!-- Header Banner -->
+    <div class="bg-dark text-white py-4 mb-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h3 class="fw-bold mb-1">Seller & Agent Portal</h3>
+                    <p class="text-light opacity-75 mb-0">List properties, manage buyer tour bookings, and respond to inquiries.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm" onclick="openAddPropertyTab()"><i class="bi bi-plus-lg me-1"></i>Add New Listing</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mb-5">
+        <!-- Agent Verification Status Alert -->
+        <div id="agentVerificationBanner" class="d-none mb-4"></div>
+
+        <!-- Quick Stats Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-buildings-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="sellerStatProperties">0</h4>
+                        <div class="text-muted small">My Listings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-check2-circle"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="sellerStatActive">0</h4>
+                        <div class="text-muted small">Active Listings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-calendar2-week-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="sellerStatVisits">0</h4>
+                        <div class="text-muted small">Tour Requests</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-chat-left-text-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="sellerStatInquiries">0</h4>
+                        <div class="text-muted small">Inquiries Received</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4 bg-white p-2 rounded-3 border shadow-sm" id="sellerTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-semibold" id="tab-listings-btn" data-bs-toggle="pill" data-bs-target="#tabListings" type="button" role="tab">
+                    <i class="bi bi-collection me-1"></i>My Properties
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold" id="tab-add-btn" data-bs-toggle="pill" data-bs-target="#tabAddProperty" type="button" role="tab">
+                    <i class="bi bi-plus-circle me-1"></i>Add New Listing
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold" id="tab-visits-btn" data-bs-toggle="pill" data-bs-target="#tabHostVisits" type="button" role="tab">
+                    <i class="bi bi-calendar-check me-1"></i>Visit Requests
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold" id="tab-inquiries-btn" data-bs-toggle="pill" data-bs-target="#tabHostInquiries" type="button" role="tab">
+                    <i class="bi bi-envelope-open me-1"></i>Received Inquiries
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="sellerTabContent">
+            <!-- 1. My Listings Tab -->
+            <div class="tab-pane fade show active" id="tabListings" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold"><i class="bi bi-houses me-2 text-primary"></i>My Published Property Listings</span>
+                        <button class="btn btn-primary btn-sm" onclick="openAddPropertyTab()"><i class="bi bi-plus me-1"></i>New Property</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Type</th>
+                                    <th>Listing</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sellerPropertiesTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">Loading your properties...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Add New Property Tab -->
+            <div class="tab-pane fade" id="tabAddProperty" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 fw-bold">
+                        <i class="bi bi-pencil-square me-2 text-primary"></i>Create / Publish New Property Listing
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="createPropertyForm">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label class="form-label small fw-semibold">Property Title</label>
+                                    <input type="text" class="form-control" id="newTitle" placeholder="e.g. Modern Sunset Blvd Villa with Pool" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Price ($)</label>
+                                    <input type="number" class="form-control" id="newPrice" placeholder="e.g. 750000" min="1" required>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Listing Type</label>
+                                    <select class="form-select" id="newListingType" required>
+                                        <option value="SALE">For Sale</option>
+                                        <option value="RENT">For Rent</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Property Type</label>
+                                    <select class="form-select" id="newPropertyType" required>
+                                        <option value="APARTMENT">Apartment</option>
+                                        <option value="HOUSE" selected>House</option>
+                                        <option value="VILLA">Luxury Villa</option>
+                                        <option value="COMMERCIAL">Commercial Office</option>
+                                        <option value="PLOT">Land / Plot</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Initial Status</label>
+                                    <select class="form-select" id="newStatus">
+                                        <option value="AVAILABLE" selected>Available</option>
+                                        <option value="PENDING">Pending</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">City</label>
+                                    <input type="text" class="form-control" id="newCity" placeholder="e.g. Los Angeles" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">State / Region</label>
+                                    <input type="text" class="form-control" id="newState" placeholder="e.g. California">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Street Address</label>
+                                    <input type="text" class="form-control" id="newAddress" placeholder="e.g. 1044 Wilshire Blvd">
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Bedrooms</label>
+                                    <input type="number" class="form-control" id="newBeds" placeholder="e.g. 4" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Bathrooms</label>
+                                    <input type="number" class="form-control" id="newBaths" placeholder="e.g. 3" min="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-semibold">Area (Sq Ft)</label>
+                                    <input type="number" class="form-control" id="newArea" placeholder="e.g. 2800" min="0">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold">Main Image URL</label>
+                                    <div class="input-group">
+                                        <input type="url" class="form-control" id="newImageUrl" placeholder="https://images.unsplash.com/photo-..." required>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="fillSampleImage()">Use Sample Photo</button>
+                                    </div>
+                                    <div class="form-text small text-muted">Provide a valid image URL (Unsplash, Imgur, or cloud-hosted).</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold">Detailed Description</label>
+                                    <textarea class="form-control" id="newDescription" rows="4" placeholder="Provide details regarding the architectural design, finishes, appliances, neighborhood perks, and parking..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="submit" class="btn btn-primary px-4 fw-semibold" id="submitPropertyBtn">
+                                    <i class="bi bi-cloud-arrow-up me-1"></i>Publish Listing
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Host Visits Tab -->
+            <div class="tab-pane fade" id="tabHostVisits" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 fw-bold">
+                        <i class="bi bi-calendar-event me-2 text-primary"></i>Buyer Tour Bookings on Your Properties
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Buyer Details</th>
+                                    <th>Date & Time Slot</th>
+                                    <th>Notes</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hostVisitsTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">Loading tour requests...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Host Inquiries Tab -->
+            <div class="tab-pane fade" id="tabHostInquiries" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 fw-bold">
+                        <i class="bi bi-chat-quote me-2 text-primary"></i>Inquiries Received From Interested Buyers
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Property</th>
+                                    <th>From Buyer</th>
+                                    <th>Subject & Message</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hostInquiriesTableBody">
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted">Loading received inquiries...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center small text-muted">
+            &copy; 2026 RealEstateHub. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let currentUser = requireAuth(['ROLE_SELLER', 'ROLE_AGENT', 'ROLE_ADMIN']);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (currentUser) {
+                const refreshed = await refreshCurrentUser();
+                if (refreshed) currentUser = refreshed;
+                renderAgentVerificationBanner();
+                loadMyProperties();
+                loadHostVisits();
+                loadHostInquiries();
+                setupCreatePropertyForm();
+            }
+        });
+
+        function renderAgentVerificationBanner() {
+            const banner = document.getElementById('agentVerificationBanner');
+            if (currentUser.role === 'ROLE_AGENT') {
+                banner.classList.remove('d-none');
+                if (currentUser.agentVerified) {
+                    banner.innerHTML = `
+                        <div class="alert alert-success d-flex align-items-center shadow-sm">
+                            <i class="bi bi-patch-check-fill fs-3 me-3 text-success"></i>
+                            <div>
+                                <h6 class="fw-bold mb-0">Verified Broker License (${currentUser.licenseNumber || 'Verified'})</h6>
+                                <div class="small">Your brokerage credentials are authenticated. You have full listing publication and tour hosting privileges.</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    banner.innerHTML = `
+                        <div class="alert alert-warning d-flex align-items-center shadow-sm">
+                            <i class="bi bi-hourglass-split fs-3 me-3 text-warning"></i>
+                            <div>
+                                <h6 class="fw-bold mb-0">Agent License Pending Admin Verification</h6>
+                                <div class="small">Your brokerage license (${currentUser.licenseNumber || 'Under Review'}) has been submitted to the platform administrator. You will be able to publish listings once approved.</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function openAddPropertyTab() {
+            const tabBtn = document.getElementById('tab-add-btn');
+            const tab = new bootstrap.Tab(tabBtn);
+            tab.show();
+        }
+
+        function fillSampleImage() {
+            const samples = [
+                'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1200&q=80',
+                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80'
+            ];
+            const rand = samples[Math.floor(Math.random() * samples.length)];
+            document.getElementById('newImageUrl').value = rand;
+        }
+
+        // 1. My Properties
+        async function loadMyProperties() {
+            const tbody = document.getElementById('sellerPropertiesTableBody');
+            try {
+                const properties = await apiFetch('/api/properties/my');
+                document.getElementById('sellerStatProperties').textContent = properties.length;
+                const activeCount = properties.filter(p => p.status === 'AVAILABLE').length;
+                document.getElementById('sellerStatActive').textContent = activeCount;
+
+                if (!properties || properties.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">You haven't listed any properties yet. Click "Add New Listing" to create your first listing.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = properties.map(p => {
+                    const statusClass = `badge-status-${p.status.toLowerCase()}`;
+                    return `
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="${p.imageUrl || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=200&q=80'}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded" alt="Thumb">
+                                    <div>
+                                        <a href="property-details.html?id=${p.id}" class="fw-bold text-dark text-decoration-none">${p.title}</a>
+                                        <div class="small text-muted"><i class="bi bi-geo-alt me-1"></i>${p.city}${p.state ? ', ' + p.state : ''}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-light text-dark border">${p.propertyType}</span></td>
+                            <td><span class="badge ${p.listingType === 'SALE' ? 'bg-primary' : 'bg-success'}">${p.listingType}</span></td>
+                            <td class="fw-bold">${formatCurrency(p.price, p.listingType)}</td>
+                            <td>
+                                <select class="form-select form-select-sm" style="width:120px;" onchange="updatePropertyStatus(${p.id}, this.value)">
+                                    <option value="AVAILABLE" ${p.status === 'AVAILABLE' ? 'selected' : ''}>AVAILABLE</option>
+                                    <option value="PENDING" ${p.status === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                                    <option value="SOLD" ${p.status === 'SOLD' ? 'selected' : ''}>SOLD</option>
+                                    <option value="RENTED" ${p.status === 'RENTED' ? 'selected' : ''}>RENTED</option>
+                                </select>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a href="property-details.html?id=${p.id}" class="btn btn-outline-primary btn-sm py-0" title="View"><i class="bi bi-eye"></i></a>
+                                    <button class="btn btn-outline-danger btn-sm py-0" onclick="deleteProperty(${p.id})" title="Delete"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">${err.message}</td></tr>`;
+            }
+        }
+
+        async function updatePropertyStatus(id, newStatus) {
+            try {
+                // Fetch property and update status
+                const prop = await apiFetch(`/api/properties/${id}`);
+                await apiFetch(`/api/properties/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        ...prop,
+                        status: newStatus
+                    })
+                });
+                showToast(`Property status updated to ${newStatus}`, 'success');
+                loadMyProperties();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+
+        async function deleteProperty(id) {
+            if (!confirm('Are you sure you want to permanently delete this listing?')) return;
+            try {
+                await apiFetch(`/api/properties/${id}`, { method: 'DELETE' });
+                showToast('Property deleted successfully', 'info');
+                loadMyProperties();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+
+        // 2. Add Property Form
+        function setupCreatePropertyForm() {
+            const form = document.getElementById('createPropertyForm');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                if (currentUser.role === 'ROLE_AGENT' && !currentUser.agentVerified) {
+                    showToast('Your agent account is pending verification by admin. You cannot publish properties yet.', 'warning');
+                    return;
+                }
+
+                const payload = {
+                    title: document.getElementById('newTitle').value.trim(),
+                    price: parseFloat(document.getElementById('newPrice').value),
+                    listingType: document.getElementById('newListingType').value,
+                    propertyType: document.getElementById('newPropertyType').value,
+                    status: document.getElementById('newStatus').value,
+                    city: document.getElementById('newCity').value.trim(),
+                    state: document.getElementById('newState').value.trim(),
+                    address: document.getElementById('newAddress').value.trim(),
+                    bedrooms: document.getElementById('newBeds').value ? parseInt(document.getElementById('newBeds').value) : null,
+                    bathrooms: document.getElementById('newBaths').value ? parseInt(document.getElementById('newBaths').value) : null,
+                    areaSqFt: document.getElementById('newArea').value ? parseFloat(document.getElementById('newArea').value) : null,
+                    imageUrl: document.getElementById('newImageUrl').value.trim(),
+                    description: document.getElementById('newDescription').value.trim()
+                };
+
+                const btn = document.getElementById('submitPropertyBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Publishing...';
+
+                try {
+                    await apiFetch('/api/properties', {
+                        method: 'POST',
+                        body: JSON.stringify(payload)
+                    });
+
+                    showToast('Property listing published successfully!', 'success');
+                    form.reset();
+
+                    // Switch back to listings tab and reload
+                    const tabBtn = document.getElementById('tab-listings-btn');
+                    const tab = new bootstrap.Tab(tabBtn);
+                    tab.show();
+                    loadMyProperties();
+
+                } catch (err) {
+                    showToast(err.message || 'Failed to create property', 'danger');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-cloud-arrow-up me-1"></i>Publish Listing';
+                }
+            });
+        }
+
+        // 3. Host Visits
+        async function loadHostVisits() {
+            const tbody = document.getElementById('hostVisitsTableBody');
+            try {
+                const visits = await apiFetch('/api/visits/host');
+                document.getElementById('sellerStatVisits').textContent = visits.length;
+
+                if (!visits || visits.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">No tour requests received yet.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = visits.map(v => {
+                    const statusClass = `badge-status-${v.status.toLowerCase()}`;
+                    const isPending = v.status === 'PENDING';
+
+                    return `
+                        <tr>
+                            <td>
+                                <a href="property-details.html?id=${v.propertyId}" class="fw-bold text-dark text-decoration-none">${v.propertyTitle || 'Property #' + v.propertyId}</a>
+                                <div class="small text-muted">${v.propertyCity}</div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold">${v.buyer ? v.buyer.name : 'Buyer'}</div>
+                                <div class="small text-muted">${v.buyer ? v.buyer.email : ''}</div>
+                                ${v.buyer && v.buyer.phone ? `<div class="small text-muted"><i class="bi bi-telephone"></i> ${v.buyer.phone}</div>` : ''}
+                            </td>
+                            <td>
+                                <div class="fw-semibold">${formatDate(v.visitDate)}</div>
+                                <div class="small text-muted">${v.timeSlot}</div>
+                            </td>
+                            <td class="small text-muted" style="max-width:200px;">${v.notes || 'None'}</td>
+                            <td><span class="badge ${statusClass}">${v.status}</span></td>
+                            <td>
+                                ${isPending ? `
+                                    <div class="d-flex gap-1">
+                                        <button class="btn btn-success btn-sm py-0" onclick="updateHostVisitStatus(${v.id}, 'APPROVED')">Approve</button>
+                                        <button class="btn btn-outline-danger btn-sm py-0" onclick="updateHostVisitStatus(${v.id}, 'REJECTED')">Reject</button>
+                                    </div>
+                                ` : v.status === 'APPROVED' ? `
+                                    <button class="btn btn-outline-primary btn-sm py-0" onclick="updateHostVisitStatus(${v.id}, 'COMPLETED')">Complete</button>
+                                ` : `<span class="small text-muted">Closed</span>`}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">${err.message}</td></tr>`;
+            }
+        }
+
+        async function updateHostVisitStatus(visitId, status) {
+            try {
+                await apiFetch(`/api/visits/${visitId}/status?status=${status}`, { method: 'PATCH' });
+                showToast(`Visit has been marked ${status}`, 'success');
+                loadHostVisits();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+
+        // 4. Host Inquiries
+        async function loadHostInquiries() {
+            const tbody = document.getElementById('hostInquiriesTableBody');
+            try {
+                const inquiries = await apiFetch('/api/inquiries/received');
+                document.getElementById('sellerStatInquiries').textContent = inquiries.length;
+
+                if (!inquiries || inquiries.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">No inquiries received yet.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = inquiries.map(inq => `
+                    <tr>
+                        <td>
+                            <a href="property-details.html?id=${inq.propertyId}" class="fw-bold text-dark text-decoration-none">${inq.propertyTitle || 'Property #' + inq.propertyId}</a>
+                            <div class="small text-muted">${inq.propertyCity}</div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">${inq.sender ? inq.sender.name : 'Buyer'}</div>
+                            <div class="small text-muted">${inq.sender ? inq.sender.email : ''}</div>
+                            ${inq.phone ? `<div class="small text-muted"><i class="bi bi-telephone"></i> ${inq.phone}</div>` : ''}
+                        </td>
+                        <td>
+                            <div class="fw-semibold">${inq.subject}</div>
+                            <div class="text-muted small">${inq.message}</div>
+                        </td>
+                        <td>
+                            <span class="badge ${inq.status === 'NEW' ? 'bg-danger' : inq.status === 'REPLIED' ? 'bg-success' : 'bg-secondary'}">${inq.status}</span>
+                        </td>
+                        <td>
+                            ${inq.status !== 'REPLIED' ? `
+                                <button class="btn btn-outline-success btn-sm py-0" onclick="markInquiryReplied(${inq.id})">Mark Replied</button>
+                            ` : `<span class="small text-muted"><i class="bi bi-check2"></i> Replied</span>`}
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-danger text-center">${err.message}</td></tr>`;
+            }
+        }
+
+        async function markInquiryReplied(id) {
+            try {
+                await apiFetch(`/api/inquiries/${id}/status?status=REPLIED`, { method: 'PATCH' });
+                showToast('Inquiry marked as replied', 'success');
+                loadHostInquiries();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

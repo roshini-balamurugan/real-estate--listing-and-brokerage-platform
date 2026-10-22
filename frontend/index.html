@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealEstateHub - Modern Real Estate Listing & Brokerage Platform</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Dynamic Navbar -->
+    <div id="navbarPlaceholder"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center">
+        <div class="container py-4">
+            <span class="badge bg-primary px-3 py-2 rounded-pill text-uppercase mb-3 tracking-wide">Premier Real Estate Marketplace</span>
+            <h1 class="display-4 fw-bold mb-3">Find Your Ideal Home, Land & Commercial Space</h1>
+            <p class="lead text-light opacity-90 mx-auto" style="max-width: 650px;">
+                Connect with verified brokerage agents, schedule private property visits, and discover verified residential & commercial properties nationwide.
+            </p>
+
+            <!-- Search Form Card -->
+            <div class="hero-search-box text-start mx-auto shadow-lg" style="max-width: 960px;">
+                <form id="heroSearchForm" class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold small text-muted"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Location / City</label>
+                        <input type="text" class="form-control" id="searchCity" placeholder="e.g. New York, Miami, Austin">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold small text-muted"><i class="bi bi-tag-fill text-success me-1"></i>Listing Type</label>
+                        <select class="form-select" id="searchListingType">
+                            <option value="">Any</option>
+                            <option value="SALE">For Sale</option>
+                            <option value="RENT">For Rent</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold small text-muted"><i class="bi bi-building text-primary me-1"></i>Property Type</label>
+                        <select class="form-select" id="searchPropertyType">
+                            <option value="">All Types</option>
+                            <option value="APARTMENT">Apartment / Condo</option>
+                            <option value="HOUSE">Single Family House</option>
+                            <option value="VILLA">Luxury Villa</option>
+                            <option value="COMMERCIAL">Commercial Office</option>
+                            <option value="PLOT">Land / Plot</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                            <i class="bi bi-search me-2"></i>Search Listings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Platform Stats Counter -->
+    <div class="container my-5">
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 shadow-sm">
+                    <h3 class="fw-bold text-primary mb-1" id="statProperties">1,200+</h3>
+                    <div class="text-muted small">Active Listings</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 shadow-sm">
+                    <h3 class="fw-bold text-success mb-1" id="statAgents">350+</h3>
+                    <div class="text-muted small">Verified Agents</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 shadow-sm">
+                    <h3 class="fw-bold text-warning mb-1" id="statVisits">4,800+</h3>
+                    <div class="text-muted small">Tours Scheduled</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="p-3 bg-white border rounded-3 shadow-sm">
+                    <h3 class="fw-bold text-info mb-1" id="statCities">45+</h3>
+                    <div class="text-muted small">Major Cities</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured Properties Section -->
+    <section class="py-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Featured Properties</h2>
+                    <p class="text-muted mb-0">Handpicked premium properties available for sale and rent</p>
+                </div>
+                <a href="properties.html" class="btn btn-outline-primary rounded-pill px-4">View All Properties <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+
+            <div class="row g-4" id="featuredPropertiesContainer">
+                <!-- Loaded via JS -->
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <div class="text-muted mt-2">Loading latest listings...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us / Features -->
+    <section class="py-5 bg-white border-top border-bottom my-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Designed for Buyers, Sellers & Brokers</h2>
+                <p class="text-muted">A seamless full-stack real estate brokerage solution</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="p-4 border rounded-3 h-100 bg-light">
+                        <div class="stat-icon bg-primary text-white mb-3">
+                            <i class="bi bi-patch-check-fill"></i>
+                        </div>
+                        <h5 class="fw-bold">Verified Brokerage Agents</h5>
+                        <p class="text-muted mb-0">Every licensed agent goes through our administrator license verification workflow before they can list or host client visits.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 border rounded-3 h-100 bg-light">
+                        <div class="stat-icon bg-success text-white mb-3">
+                            <i class="bi bi-calendar2-check-fill"></i>
+                        </div>
+                        <h5 class="fw-bold">Book On-Site Property Tours</h5>
+                        <p class="text-muted mb-0">Buyers can select their preferred dates and time slots. Sellers and agents receive instant notifications to approve or confirm bookings.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-4 border rounded-3 h-100 bg-light">
+                        <div class="stat-icon bg-info text-white mb-3">
+                            <i class="bi bi-chat-dots-fill"></i>
+                        </div>
+                        <h5 class="fw-bold">Direct Messaging & Inquiries</h5>
+                        <p class="text-muted mb-0">Send targeted inquiries directly to the listing agent or property owner with live email and system notifications.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="container my-5 text-center">
+        <div class="p-5 bg-dark text-white rounded-4 shadow">
+            <h2 class="fw-bold mb-3">Are You a Property Owner or Real Estate Agent?</h2>
+            <p class="lead opacity-80 mx-auto mb-4" style="max-width: 600px;">
+                List your residential and commercial properties with us to connect with high-intent buyers and renters today.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="register.html" class="btn btn-primary btn-lg px-4 rounded-pill">Register as Seller / Agent</a>
+                <a href="login.html" class="btn btn-outline-light btn-lg px-4 rounded-pill">Sign In to Dashboard</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <h5 class="text-white fw-bold"><i class="bi bi-buildings-fill text-info me-2"></i>RealEstateHub</h5>
+                    <p class="small text-muted">College Capstone Project: Real Estate Listing and Brokerage Platform powered by Java Spring Boot, MySQL, Spring Security, and Bootstrap.</p>
+                </div>
+                <div class="col-md-2 col-6">
+                    <h6 class="text-white">Quick Links</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="properties.html">Browse Properties</a></li>
+                        <li><a href="properties.html?listingType=SALE">Properties for Sale</a></li>
+                        <li><a href="properties.html?listingType=RENT">Properties for Rent</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 col-6">
+                    <h6 class="text-white">User Portals</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="login.html">Sign In</a></li>
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="dashboard-buyer.html">Buyer Hub</a></li>
+                        <li><a href="dashboard-seller.html">Agent / Seller Hub</a></li>
+                        <li><a href="dashboard-admin.html">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="text-white">Technology Stack</h6>
+                    <p class="small text-muted mb-1"><i class="bi bi-check2 text-success me-1"></i>Java 21 & Spring Boot 4 / 3</p>
+                    <p class="small text-muted mb-1"><i class="bi bi-check2 text-success me-1"></i>Spring Data JPA & MySQL</p>
+                    <p class="small text-muted mb-1"><i class="bi bi-check2 text-success me-1"></i>Spring Security & Stateless JWT</p>
+                    <p class="small text-muted"><i class="bi bi-check2 text-success me-1"></i>Responsive Bootstrap 5 UI</p>
+                </div>
+            </div>
+            <hr class="border-secondary my-3">
+            <div class="text-center small text-muted">
+                &copy; 2026 RealEstateHub Platform. Built for College Capstone Project. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

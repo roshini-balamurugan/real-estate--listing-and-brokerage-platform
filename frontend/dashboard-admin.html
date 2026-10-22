@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Console - RealEstateHub</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Dynamic Navbar -->
+    <div id="navbarPlaceholder"></div>
+
+    <!-- Header Banner -->
+    <div class="bg-dark text-white py-4 mb-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <div>
+                    <h3 class="fw-bold mb-1"><i class="bi bi-shield-lock text-warning me-2"></i>Platform Administration</h3>
+                    <p class="text-light opacity-75 mb-0">System metrics, broker license verification, user oversight, and listing control.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-danger fs-6 px-3 py-2"><i class="bi bi-shield-fill-check me-1"></i>SUPER ADMIN</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container mb-5">
+        <!-- Overview Metrics Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-lg-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="adminStatUsers">0</h4>
+                        <div class="text-muted small">Total Registered Users</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                        <i class="bi bi-patch-question-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="adminStatPendingAgents">0</h4>
+                        <div class="text-muted small">Pending Agent Licenses</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                        <i class="bi bi-buildings"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="adminStatProperties">0</h4>
+                        <div class="text-muted small">Published Properties</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon bg-info bg-opacity-10 text-info">
+                        <i class="bi bi-calendar2-range-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0" id="adminStatVisits">0</h4>
+                        <div class="text-muted small">Tours Scheduled</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4 bg-white p-2 rounded-3 border shadow-sm" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-semibold" id="tab-verify-btn" data-bs-toggle="pill" data-bs-target="#tabAgentVerification" type="button" role="tab">
+                    <i class="bi bi-patch-check me-1"></i>Agent Verification Center
+                    <span class="badge bg-danger ms-1" id="agentBadgeCount">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold" id="tab-users-btn" data-bs-toggle="pill" data-bs-target="#tabUsers" type="button" role="tab">
+                    <i class="bi bi-person-lines-fill me-1"></i>User Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-semibold" id="tab-props-btn" data-bs-toggle="pill" data-bs-target="#tabAllProps" type="button" role="tab">
+                    <i class="bi bi-building-gear me-1"></i>Listings Oversight
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="adminTabContent">
+            <!-- 1. Agent Verification Center -->
+            <div class="tab-pane fade show active" id="tabAgentVerification" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold"><i class="bi bi-shield-check me-2 text-warning"></i>Broker & Agent License Verification Applications</span>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="loadPendingAgents()"><i class="bi bi-arrow-clockwise me-1"></i>Refresh</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Agent Name</th>
+                                    <th>Email & Phone</th>
+                                    <th>Agency / Brokerage</th>
+                                    <th>License Number</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="agentVerificationTableBody">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">Checking agent applications...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. User Management -->
+            <div class="tab-pane fade" id="tabUsers" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 fw-bold">
+                        <i class="bi bi-people me-2 text-primary"></i>All Platform Accounts
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Role</th>
+                                    <th>Registered Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Listings Oversight -->
+            <div class="tab-pane fade" id="tabAllProps" role="tabpanel">
+                <div class="card border shadow-sm">
+                    <div class="card-header bg-white py-3 fw-bold">
+                        <i class="bi bi-buildings me-2 text-primary"></i>All Property Listings
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Location</th>
+                                    <th>Type</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Owner / Agent</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminPropertiesTableBody">
+                                <tr>
+                                    <td colspan="7" class="text-center py-4 text-muted">Loading listings...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center small text-muted">
+            &copy; 2026 RealEstateHub. Super Administrator Portal.
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const adminUser = requireAuth(['ROLE_ADMIN']);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (adminUser) {
+                loadAdminStats();
+                loadPendingAgents();
+                loadAllUsers();
+                loadAdminProperties();
+            }
+        });
+
+        async function loadAdminStats() {
+            try {
+                const stats = await apiFetch('/api/admin/stats');
+                document.getElementById('adminStatUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('adminStatPendingAgents').textContent = stats.pendingAgentVerifications || 0;
+                document.getElementById('agentBadgeCount').textContent = stats.pendingAgentVerifications || 0;
+                document.getElementById('adminStatProperties').textContent = stats.totalProperties || 0;
+                document.getElementById('adminStatVisits').textContent = stats.totalVisits || 0;
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        // 1. Agent Verification
+        async function loadPendingAgents() {
+            const tbody = document.getElementById('agentVerificationTableBody');
+            try {
+                const pending = await apiFetch('/api/admin/agents/pending');
+                const badge = document.getElementById('agentBadgeCount');
+                if (badge) badge.textContent = pending.length;
+
+                if (!pending || pending.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted"><i class="bi bi-check-circle text-success me-1"></i>All submitted broker licenses have been reviewed!</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = pending.map(a => `
+                    <tr>
+                        <td class="fw-bold">${a.name}</td>
+                        <td>
+                            <div>${a.email}</div>
+                            <div class="small text-muted">${a.phone || 'N/A'}</div>
+                        </td>
+                        <td>${a.agencyName || 'Independent Broker'}</td>
+                        <td><span class="badge bg-light text-dark border font-monospace">${a.licenseNumber || 'PENDING'}</span></td>
+                        <td><span class="badge-pending"><i class="bi bi-clock-history"></i> Verification Pending</span></td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-success btn-sm py-1" onclick="verifyAgentLicense(${a.id}, true)">
+                                    <i class="bi bi-check-lg me-1"></i>Approve
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm py-1" onclick="verifyAgentLicense(${a.id}, false)">
+                                    <i class="bi bi-x-lg me-1"></i>Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-danger text-center">${err.message}</td></tr>`;
+            }
+        }
+
+        async function verifyAgentLicense(agentId, isApproved) {
+            const promptMsg = isApproved
+                ? 'Approve this agent license? The agent will immediately receive listing permissions.'
+                : 'Reject this agent application?';
+            if (!confirm(promptMsg)) return;
+
+            try {
+                await apiFetch(`/api/admin/agents/${agentId}/verify`, {
+                    method: 'POST',
+                    body: JSON.stringify({ verified: isApproved })
+                });
+
+                showToast(isApproved ? 'Agent license approved!' : 'Agent license rejected', isApproved ? 'success' : 'info');
+                loadPendingAgents();
+                loadAdminStats();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+
+        // 2. Users
+        async function loadAllUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            try {
+                const users = await apiFetch('/api/admin/users');
+
+                tbody.innerHTML = users.map(u => {
+                    const roleColor = u.role === 'ROLE_ADMIN' ? 'bg-danger' :
+                                      u.role === 'ROLE_AGENT' ? 'bg-info' :
+                                      u.role === 'ROLE_SELLER' ? 'bg-success' : 'bg-primary';
+
+                    return `
+                        <tr>
+                            <td class="text-muted small">${u.id}</td>
+                            <td class="fw-bold">${u.name}</td>
+                            <td>${u.email}</td>
+                            <td class="small text-muted">${u.phone || '--'}</td>
+                            <td><span class="badge ${roleColor}">${u.role.replace('ROLE_', '')}</span></td>
+                            <td class="small text-muted">${formatDate(u.createdAt)}</td>
+                            <td>
+                                ${u.role !== 'ROLE_ADMIN' ? `
+                                    <button class="btn btn-outline-danger btn-sm py-0" onclick="deleteUserAccount(${u.id})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                ` : '<span class="small text-muted">Admin</span>'}
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-danger text-center">${err.message}</td></tr>`;
+            }
+        }
+
+        async function deleteUserAccount(userId) {
+            if (!confirm('Are you sure you want to permanently delete this user account?')) return;
+            try {
+                await apiFetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+                showToast('User account deleted', 'info');
+                loadAllUsers();
+                loadAdminStats();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+
+        // 3. Properties
+        async function loadAdminProperties() {
+            const tbody = document.getElementById('adminPropertiesTableBody');
+            try {
+                const properties = await apiFetch('/api/admin/properties');
+
+                tbody.innerHTML = properties.map(p => `
+                    <tr>
+                        <td>
+                            <a href="property-details.html?id=${p.id}" class="fw-bold text-dark text-decoration-none">${p.title}</a>
+                        </td>
+                        <td>${p.city}${p.state ? ', ' + p.state : ''}</td>
+                        <td><span class="badge bg-light text-dark border">${p.propertyType} (${p.listingType})</span></td>
+                        <td class="fw-bold">${formatCurrency(p.price, p.listingType)}</td>
+                        <td><span class="badge badge-status-${p.status.toLowerCase()}">${p.status}</span></td>
+                        <td class="small">${p.owner ? p.owner.name : 'Unknown'}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a href="property-details.html?id=${p.id}" class="btn btn-outline-primary btn-sm py-0"><i class="bi bi-eye"></i></a>
+                                <button class="btn btn-outline-danger btn-sm py-0" onclick="deleteListingAdmin(${p.id})"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-danger text-center">${err.message}</td></tr>`;
+            }
+        }
+
+        async function deleteListingAdmin(id) {
+            if (!confirm('Delete this listing as administrator?')) return;
+            try {
+                await apiFetch(`/api/properties/${id}`, { method: 'DELETE' });
+                showToast('Listing removed', 'info');
+                loadAdminProperties();
+                loadAdminStats();
+            } catch (err) {
+                showToast(err.message, 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

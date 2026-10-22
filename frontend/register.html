@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - RealEstateHub</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Dynamic Navbar -->
+    <div id="navbarPlaceholder"></div>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="p-4 bg-primary text-white text-center">
+                        <i class="bi bi-person-plus-fill fs-1 mb-2"></i>
+                        <h4 class="fw-bold mb-1">Create an Account</h4>
+                        <p class="small text-light opacity-75 mb-0">Join our marketplace as a Buyer, Seller, or Licensed Broker</p>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form id="registerForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-semibold">Full Name</label>
+                                    <input type="text" class="form-control" id="regName" placeholder="e.g. John Doe" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-semibold">Phone Number</label>
+                                    <input type="tel" class="form-control" id="regPhone" placeholder="+1 234-567-8900">
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold">Email Address</label>
+                                    <input type="email" class="form-control" id="regEmail" placeholder="name@example.com" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold">Password</label>
+                                    <input type="password" class="form-control" id="regPassword" placeholder="Minimum 6 characters" minlength="6" required>
+                                </div>
+
+                                <div class="col-12">
+                                    <label class="form-label small fw-semibold">I want to register as a:</label>
+                                    <div class="row g-2">
+                                        <div class="col-4">
+                                            <input type="radio" class="btn-check" name="role" id="roleBuyer" value="ROLE_BUYER" checked onchange="toggleAgentFields()">
+                                            <label class="btn btn-outline-primary w-100 py-2 small fw-semibold" for="roleBuyer">
+                                                <i class="bi bi-person d-block fs-5"></i>Buyer
+                                            </label>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="radio" class="btn-check" name="role" id="roleSeller" value="ROLE_SELLER" onchange="toggleAgentFields()">
+                                            <label class="btn btn-outline-success w-100 py-2 small fw-semibold" for="roleSeller">
+                                                <i class="bi bi-house d-block fs-5"></i>Seller
+                                            </label>
+                                        </div>
+                                        <div class="col-4">
+                                            <input type="radio" class="btn-check" name="role" id="roleAgent" value="ROLE_AGENT" onchange="toggleAgentFields()">
+                                            <label class="btn btn-outline-info w-100 py-2 small fw-semibold" for="roleAgent">
+                                                <i class="bi bi-patch-check d-block fs-5"></i>Agent
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Agent Specific Fields -->
+                                <div class="col-12 d-none" id="agentFields">
+                                    <div class="p-3 bg-light border rounded-3">
+                                        <h6 class="fw-bold small text-primary mb-2"><i class="bi bi-shield-check me-1"></i>Brokerage Details (Admin Verification Required)</h6>
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-semibold">Agency / Brokerage Name</label>
+                                                <input type="text" class="form-control form-control-sm" id="regAgency" placeholder="e.g. Century 21, RE/MAX">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label small fw-semibold">Broker License Number</label>
+                                                <input type="text" class="form-control form-control-sm" id="regLicense" placeholder="e.g. NY-LIC-98214">
+                                            </div>
+                                        </div>
+                                        <div class="text-muted small mt-2" style="font-size:0.75rem;">
+                                            * Note: Registered agents can log in immediately; listing creation permissions are granted once the administrator verifies your license.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold mt-4 shadow-sm" id="regSubmitBtn">
+                                Complete Registration
+                            </button>
+                        </form>
+
+                        <div class="text-center small text-muted mt-3">
+                            Already have an account? <a href="login.html" class="fw-semibold text-primary text-decoration-none">Sign in here</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- App Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        function toggleAgentFields() {
+            const isAgent = document.getElementById('roleAgent').checked;
+            const fields = document.getElementById('agentFields');
+            if (isAgent) {
+                fields.classList.remove('d-none');
+            } else {
+                fields.classList.add('d-none');
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const phone = document.getElementById('regPhone').value.trim();
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const agencyName = document.getElementById('regAgency').value.trim();
+            const licenseNumber = document.getElementById('regLicense').value.trim();
+
+            const btn = document.getElementById('regSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Creating account...';
+
+            try {
+                const payload = {
+                    name,
+                    email,
+                    password,
+                    phone,
+                    role,
+                    agencyName: role === 'ROLE_AGENT' ? agencyName : null,
+                    licenseNumber: role === 'ROLE_AGENT' ? licenseNumber : null
+                };
+
+                const response = await apiFetch('/api/auth/register', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                setToken(response.token);
+                setCurrentUser(response);
+                showToast(`Account created! Welcome, ${response.name}.`, 'success');
+
+                setTimeout(() => {
+                    if (response.role === 'ROLE_SELLER' || response.role === 'ROLE_AGENT') {
+                        window.location.href = 'dashboard-seller.html';
+                    } else {
+                        window.location.href = 'dashboard-buyer.html';
+                    }
+                }, 800);
+
+            } catch (err) {
+                showToast(err.message || 'Registration failed. Please check form details.', 'danger');
+                btn.disabled = false;
+                btn.innerHTML = 'Complete Registration';
+            }
+        });
+    </script>
+</body>
+</html>
