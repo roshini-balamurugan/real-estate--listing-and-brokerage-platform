@@ -116,6 +116,9 @@ async function loadPropertyDetails(id) {
             }
         }
 
+        // Initialize Mortgage Estimator
+        calculateMortgage();
+
     } catch (err) {
         console.error(err);
         if (loadingEl) {
@@ -260,3 +263,28 @@ function setupForms(propertyId) {
         });
     }
 }
+
+function calculateMortgage() {
+    if (!currentProperty || !currentProperty.price) return;
+
+    const downPayment = parseFloat(document.getElementById('calcDownPayment')?.value) || 0;
+    const annualRate = (parseFloat(document.getElementById('calcInterestRate')?.value) || 6.5) / 100;
+    const termYears = parseInt(document.getElementById('calcLoanTerm')?.value) || 30;
+
+    const principal = Math.max(0, currentProperty.price - downPayment);
+    const monthlyRate = annualRate / 12;
+    const totalPayments = termYears * 12;
+
+    let monthlyPayment = 0;
+    if (principal > 0 && monthlyRate > 0) {
+        monthlyPayment = (principal * (monthlyRate * Math.pow(1 + monthlyRate, totalPayments))) / (Math.pow(1 + monthlyRate, totalPayments) - 1);
+    } else if (principal > 0) {
+        monthlyPayment = principal / totalPayments;
+    }
+
+    const resultEl = document.getElementById('calcMonthlyPayment');
+    if (resultEl) {
+        resultEl.textContent = `$${Math.round(monthlyPayment).toLocaleString()}/mo`;
+    }
+}
+

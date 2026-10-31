@@ -108,6 +108,33 @@
                         <div class="col-md-4 col-6"><i class="bi bi-check-circle-fill text-success me-2"></i>Nearby Public Transit</div>
                     </div>
                 </div>
+
+                <!-- Mortgage / Loan Estimator Widget -->
+                <div class="bg-white border rounded-3 p-4 shadow-sm mb-4" id="mortgageCalculatorCard">
+                    <h5 class="fw-bold mb-2"><i class="bi bi-calculator me-2 text-primary"></i>Mortgage & Loan EMI Estimator</h5>
+                    <p class="text-muted small mb-3">Estimate your monthly mortgage payments based on purchase price, down payment, and term.</p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Down Payment ($)</label>
+                            <input type="number" class="form-control form-control-sm" id="calcDownPayment" value="50000" oninput="calculateMortgage()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Interest Rate (%)</label>
+                            <input type="number" class="form-control form-control-sm" id="calcInterestRate" value="6.5" step="0.1" oninput="calculateMortgage()">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Loan Term</label>
+                            <select class="form-select form-select-sm" id="calcLoanTerm" onchange="calculateMortgage()">
+                                <option value="15">15 Years</option>
+                                <option value="30" selected>30 Years</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="alert alert-light border mt-3 mb-0 d-flex justify-content-between align-items-center">
+                        <span class="small text-muted fw-semibold">Estimated Monthly Payment:</span>
+                        <h4 class="fw-bold text-success mb-0" id="calcMonthlyPayment">$0/mo</h4>
+                    </div>
+                </div>
             </div>
 
             <!-- Sidebar Actions & Host Profile -->
