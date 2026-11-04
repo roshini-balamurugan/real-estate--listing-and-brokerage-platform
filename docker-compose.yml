@@ -1,0 +1,30 @@
+services:
+  mysqldb:
+    image: mysql:8.0
+    container_name: realestate_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: realestate
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: realestate_backend
+    restart: on-failure
+    depends_on:
+      - mysqldb
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/realestate?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:
