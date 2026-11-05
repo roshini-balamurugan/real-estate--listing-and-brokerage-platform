@@ -14,6 +14,8 @@ A modern full-stack Real Estate Listing and Brokerage Platform built with **Java
 | **ORM / Data Access**| **Spring Data JPA & Hibernate** | Object-relational mapping, custom JPQL queries |
 | **Security** | **Spring Security + JJWT 0.12.6** | BCrypt password hashing, stateless JWT authentication, role guards |
 | **Build Tool** | **Maven Wrapper (`mvnw` / `mvnw.cmd`)** | Zero-dependency build tool included |
+| **Containerization** | **Docker & Docker Compose** | Multi-stage image build and isolated multi-container setup |
+| **API Testing** | **Postman Collection (v2.1)** | Pre-configured collection for all REST endpoints |
 | **Frontend** | **HTML5, CSS3, JavaScript (ES6), Bootstrap 5.3** | Responsive UI, interactive modals, toasts, dynamic headers |
 
 ---
@@ -22,6 +24,7 @@ A modern full-stack Real Estate Listing and Brokerage Platform built with **Java
 
 1. **Buyer (`ROLE_BUYER`)**:
    - Search & filter listings by city, price range, property type, and sale/rent mode.
+   - Interactive mortgage EMI loan estimator on property pages.
    - Save properties to favorites / wishlist.
    - Schedule on-site property tours with preferred date and time slot.
    - Send direct inquiries to property owners and licensed agents.
@@ -55,7 +58,12 @@ c:\real estate listing and brokerage platform/
 │   ├── launch.json                   # One-click F5 run configuration for VS Code
 │   ├── tasks.json                    # VS Code build & launch tasks
 │   └── settings.json                 # Java project configuration
+├── postman/
+│   └── RealEstateHub_API_Collection.json # Postman collection for all REST APIs
+├── docker-compose.yml                # Docker Compose multi-container configuration
+├── .dockerignore                     # Docker build exclusion rules
 ├── backend/
+│   ├── Dockerfile                    # Multi-stage Dockerfile (JDK build + JRE runtime)
 │   ├── mvnw & mvnw.cmd               # Maven wrappers for Windows and Unix
 │   ├── pom.xml                       # Maven dependency management
 │   └── src/
@@ -63,36 +71,26 @@ c:\real estate listing and brokerage platform/
 │       │   ├── java/com/realestate/backend/
 │       │   │   ├── BackendApplication.java       # Spring Boot main entry point
 │       │   │   ├── HomeController.java           # Health check endpoint (/api/health)
-│       │   │   ├── config/
-│       │   │   │   └── WebConfig.java            # Static resource routing and view mappings
-│       │   │   ├── controller/
-│       │   │   │   ├── AuthController.java       # Register, Login, Me endpoints
-│       │   │   │   ├── PropertyController.java   # CRUD, search, filter, /my listings
-│       │   │   │   ├── FavoriteController.java   # Add, remove, check, list favorites
-│       │   │   │   ├── VisitController.java      # Schedule, host approvals, buyer tours
-│       │   │   │   ├── InquiryController.java    # Send, receive, update reply status
-│       │   │   │   ├── NotificationController.java# List, unread count, mark read
-│       │   │   │   ├── AdminController.java      # Stats, users, agent verification
-│       │   │   │   └── AgentController.java      # Verified agents directory
-│       │   │   ├── dto/                          # Clean data transfer objects
-│       │   │   ├── model/                        # JPA Entities: User, Property, Favorite, VisitSchedule, Inquiry, Notification
+│       │   │   ├── config/WebConfig.java         # Static resource routing and view mappings
+│       │   │   ├── controller/                   # REST API controllers
+│       │   │   ├── dto/                          # Clean data transfer objects & ApiResponse
+│       │   │   ├── exception/                    # GlobalExceptionHandler & Custom exceptions
+│       │   │   ├── model/                        # JPA Entities: User, Property, Favorite, Visit, Inquiry
 │       │   │   ├── repository/                   # Spring Data JPA Repositories
-│       │   │   ├── security/                     # SecurityConfig, JwtTokenProvider, JwtAuthenticationFilter, CustomUserDetailsService
-│       │   │   └── service/                      # Business logic layer & DataInitializer
+│       │   │   ├── security/                     # Spring Security & JWT Filter
+│       │   │   └── service/                      # Business services & DataInitializer
 │       │   └── resources/
 │       │       ├── application.properties        # MySQL connection and JWT parameters
+│       │       ├── schema.sql                    # Standalone MySQL DDL schema
+│       │       ├── data.sql                      # Initial seed documentation
 │       │       └── static/                       # Production web UI bundle served by Spring Boot
+│       └── test/java/com/realestate/backend/     # JUnit 5 & Mockito service unit tests
 ├── frontend/                                     # Standalone frontend files (HTML/CSS/JS)
 │   ├── css/styles.css                            # Custom design system & badges
-│   ├── js/
-│   │   ├── api.js                                # Reusable API client, tokens & toasts
-│   │   ├── auth.js                               # Global navbar, notifications & session
-│   │   ├── main.js                               # Homepage logic & featured listings
-│   │   ├── properties.js                         # Search, filter, and property cards
-│   │   └── property-details.js                   # Gallery, visit scheduling & inquiries
+│   ├── js/                                       # Reusable API client, mortgage calculator, and UI logic
 │   ├── index.html                                # Homepage & Hero search
 │   ├── properties.html                           # Full catalog with dynamic filters
-│   ├── property-details.html                     # Specifications, gallery, agent badge
+│   ├── property-details.html                     # Specifications, gallery, agent badge, EMI calculator
 │   ├── login.html                                # Sign in with 1-click demo autofill
 │   ├── register.html                             # Buyer, Seller, Agent registration
 │   ├── dashboard-buyer.html                      # Buyer portal (Favorites, Tours, Inquiries)
@@ -115,82 +113,19 @@ For viva presentation and quick evaluation, the application automatically seeds 
 | **Seller** | `seller@realestate.com` | `seller123` | Property owner with pre-listed properties |
 | **Buyer** | `buyer@realestate.com` | `buyer123` | Buyer with saved favorites and active tours |
 
-> *Tip: On `login.html`, click any of the 5 colored quick-fill demo buttons to immediately autofill credentials without typing!*
-
 ---
 
-## 🚀 Running the Project in Visual Studio Code
+## 🚀 Running the Project
 
-### Step 1: Open the Project
-1. Open **Visual Studio Code**.
-2. Go to **File** ➔ **Open Folder...** and select:
-   `c:\real estate  listing and brokerage platform`
+### Option A: Running in Visual Studio Code (Local)
+1. Open **VS Code** ➔ **Open Folder** ➔ Select the project directory.
+2. Ensure **Extension Pack for Java** is installed.
+3. Open `BackendApplication.java` and click **Run** (or press **F5**).
+4. Access the application in your browser: **`http://localhost:8080`**
 
-### Step 2: Ensure Recommended Extensions Are Installed
-Install the following extensions from the VS Code Marketplace:
-- **Extension Pack for Java** (by Microsoft)
-- **Spring Boot Extension Pack** (by VMware)
-
-### Step 3: Verify MySQL Configuration
-Ensure MySQL server is running. In `backend/src/main/resources/application.properties`:
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/realestate?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-spring.datasource.username=root
-spring.datasource.password=roshini247
+### Option B: Running with Docker Compose
+To run both MySQL and the Spring Boot application in isolated containers:
+```bash
+docker compose up --build
 ```
-*(If your local MySQL root password differs, update `spring.datasource.password` accordingly).*
-
-### Step 4: Run the Application
-You can run the project using any of these simple methods:
-
-#### Method A: Using the VS Code Run Menu (Recommended)
-1. Navigate to:
-   `backend/src/main/java/com/realestate/backend/BackendApplication.java`
-2. Click the **Run** button above the `main` method (or press **F5**).
-
-#### Method B: Using VS Code Integrated Terminal
-1. Open a terminal in VS Code (**Terminal** ➔ **New Terminal**).
-2. Run:
-   ```powershell
-   cd backend
-   .\mvnw.cmd spring-boot:run
-   ```
-
-### Step 5: Access the Web Application
-Open your browser and navigate to:
-👉 **`http://localhost:8080`**
-
-Spring Boot serves both the Java REST APIs and the HTML/JS frontend unified from a single port without CORS or cross-origin hurdles!
-
----
-
-## 🎯 Capstone Demonstration Walkthrough (Viva Guide)
-
-1. **Homepage & Catalog**:
-   - Open `http://localhost:8080`.
-   - Use the Hero search bar to search for `"Miami"` or `"New York"`.
-   - Filter properties for **Sale** or **Rent**, select property type (Apartment, Villa, House), and view instant results.
-
-2. **Property Details & Inquiries**:
-   - Click on any property (e.g. *Luxury Waterfront Villa*).
-   - View high-resolution image gallery, specs (Bedrooms, Bathrooms, Sqft), and the listing agent's **Verified Broker Badge**.
-   - Click **Schedule a Visit** to choose a date/time slot.
-   - Submit an inquiry using the quick message box.
-
-3. **Buyer Dashboard**:
-   - Log in as `buyer@realestate.com` (`buyer123`).
-   - View your saved favorites, scheduled tour statuses (Pending / Approved), and inquiry history.
-   - Click the heart icon to add or remove favorites on the fly.
-
-4. **Seller & Agent Portal**:
-   - Log in as `agent@realestate.com` (`agent123`).
-   - View your published listings, incoming tour requests, and received inquiries.
-   - Click **Approve** or **Reject** on tour requests.
-   - Add a new property listing with price, city, beds, baths, and image URL.
-
-5. **Admin Console & Agent Verification**:
-   - Log in as `admin@realestate.com` (`admin123`).
-   - Open the **Agent Verification Center** tab.
-   - Observe the pending license application for *Sarah Jenkins* (`sarah.agent@realestate.com`).
-   - Click **Approve**.
-   - Log in as `sarah.agent@realestate.com` (`agent123`) to show that her dashboard banner immediately changes to **Verified Broker License** and property creation is unlocked!
+Access the application at **`http://localhost:8080`**.
